@@ -1,14 +1,14 @@
 package cl.speedfast;
 
-public class Pedido {
+public abstract class Pedido {
     private int idPedido;
     private String direccionEntrega;
-    private String tipoPedido;
+    private int distanciaKm;
 
-    public Pedido(int idPedido, String direccionEntrega, String tipoPedido) {
+    public Pedido(int idPedido, String direccionEntrega, int distanciaKm) {
         this.idPedido = idPedido;
         this.direccionEntrega = direccionEntrega;
-        this.tipoPedido = tipoPedido;
+        this.distanciaKm = distanciaKm;
     }
 
     public int getIdPedido() {
@@ -19,12 +19,15 @@ public class Pedido {
         return direccionEntrega;
     }
 
-    public String getTipoPedido() {
-        return tipoPedido;
+    public int getDistanciaKm() {
+        return distanciaKm;
     }
 
-    public void asignarRepartidor() {
-        System.out.println("Asignando un repartidor para el pedido " + idPedido
-                + " (" + tipoPedido + ") con destino a " + direccionEntrega + ".");
+    public void mostrarResumen() {
+        System.out.println(getClass().getSimpleName() + " #" + idPedido);
+        System.out.println("Direccion: " + direccionEntrega);
+        System.out.println("Distancia: " + distanciaKm + " km");
     }
+
+    public abstract int calcularTiempoEntrega();
 }
