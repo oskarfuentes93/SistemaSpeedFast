@@ -10,4 +10,10 @@ public class PedidoEncomienda extends Pedido {
     public int calcularTiempoEntrega() {
         return (int) (20 + 1.5 * getDistanciaKm());
     }
+
+    @Override
+    public void asignarRepartidor() {
+        setRepartidor("Repartidor en camioneta");
+        System.out.println("Pedido #" + getIdPedido() + ": encomienda asignada a repartidor en camioneta.");
+    }
 }

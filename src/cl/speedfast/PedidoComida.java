@@ -10,4 +10,10 @@ public class PedidoComida extends Pedido {
     public int calcularTiempoEntrega() {
         return 15 + 2 * getDistanciaKm();
     }
+
+    @Override
+    public void asignarRepartidor() {
+        setRepartidor("Repartidor en moto");
+        System.out.println("Pedido #" + getIdPedido() + ": comida asignada a repartidor en moto.");
+    }
 }

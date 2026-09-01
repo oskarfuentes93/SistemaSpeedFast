@@ -14,4 +14,10 @@ public class PedidoExpress extends Pedido {
         }
         return tiempo;
     }
+
+    @Override
+    public void asignarRepartidor() {
+        setRepartidor("Repartidor en bicicleta");
+        System.out.println("Pedido #" + getIdPedido() + ": express asignada a repartidor en bicicleta.");
+    }
 }
