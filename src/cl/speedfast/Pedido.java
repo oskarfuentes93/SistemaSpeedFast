@@ -5,11 +5,13 @@ public abstract class Pedido implements Despachable, Cancelable {
     private String direccionEntrega;
     private int distanciaKm;
     private String repartidor;
+    private EstadoPedido estado;
 
     public Pedido(int idPedido, String direccionEntrega, int distanciaKm) {
         this.idPedido = idPedido;
         this.direccionEntrega = direccionEntrega;
         this.distanciaKm = distanciaKm;
+        this.estado = EstadoPedido.PENDIENTE;
     }
 
     public int getIdPedido() {
@@ -30,6 +32,14 @@ public abstract class Pedido implements Despachable, Cancelable {
 
     protected void setRepartidor(String repartidor) {
         this.repartidor = repartidor;
+    }
+
+    public EstadoPedido getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPedido nuevoEstado) {
+        this.estado = nuevoEstado;
     }
 
     public void mostrarResumen() {

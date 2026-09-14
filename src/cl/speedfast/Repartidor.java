@@ -1,48 +1,36 @@
 package cl.speedfast;
 
-import java.util.List;
-import java.util.Random;
-
 public class Repartidor implements Runnable {
     private String nombre;
-    private List<Pedido> pedidosAsignados;
-    private Random random = new Random();
+    private ZonaDeCarga zonaDeCarga;
 
-    public Repartidor(String nombre, List<Pedido> pedidosAsignados) {
+    public Repartidor(String nombre, ZonaDeCarga zonaDeCarga) {
         this.nombre = nombre;
-        this.pedidosAsignados = pedidosAsignados;
+        this.zonaDeCarga = zonaDeCarga;
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public List<Pedido> getPedidosAsignados() {
-        return pedidosAsignados;
-    }
-
     @Override
     public void run() {
-        System.out.println("[Repartidor " + nombre + "] Inicia su ruta con " + pedidosAsignados.size() + " pedidos.");
+        Pedido pedido;
+        while ((pedido = zonaDeCarga.retirarPedido()) != null) {
+            System.out.println("[Repartidor - " + nombre + "] Retirando pedido #" + pedido.getIdPedido() + "...");
+            pedido.setEstado(EstadoPedido.EN_REPARTO);
+            System.out.println("[Repartidor - " + nombre + "] Estado: " + pedido.getEstado());
 
-        for (Pedido pedido : pedidosAsignados) {
-            System.out.println("[Repartidor " + nombre + "] Saliendo a entregar pedido #"
-                    + pedido.getIdPedido() + " (" + pedido.getClass().getSimpleName()
-                    + "), tiempo estimado " + pedido.calcularTiempoEntrega() + " min.");
-
+            System.out.println("[Repartidor - " + nombre + "] Entregando pedido #" + pedido.getIdPedido() + "...");
             try {
-                int demora = 1000 + random.nextInt(2000); // entre 1000 y 2999 ms
-                Thread.sleep(demora);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                System.out.println("[Repartidor " + nombre + "] Interrumpido durante la entrega del pedido #"
-                        + pedido.getIdPedido() + ".");
                 return;
             }
 
-            System.out.println("[Repartidor " + nombre + "] Pedido #" + pedido.getIdPedido() + " entregado.");
+            pedido.setEstado(EstadoPedido.ENTREGADO);
+            System.out.println("[Repartidor - " + nombre + "] Estado: " + pedido.getEstado());
         }
-
-        System.out.println("[Repartidor " + nombre + "] Termino todas sus entregas.");
     }
 }
