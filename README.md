@@ -1,29 +1,63 @@
 # SistemaSpeedFast
 
-Sistema orientado a objetos para la empresa de reparto SpeedFast, desarrollado en Java (IntelliJ IDEA) para el ramo Desarrollo Orientado a Objetos II (DuocUC).
+Sistema orientado a objetos para la empresa de reparto **SpeedFast**, desarrollado en **Java** con **IntelliJ IDEA** para el ramo **Desarrollo Orientado a Objetos II (PRY2203)** de DuocUC.
+
+El proyecto ha evolucionado semana a semana, partiendo de un modelo de clases con herencia e interfaces, incorporando luego concurrencia con hilos y, finalmente, una interfaz gráfica de escritorio con Java Swing.
+
+## Tecnologías
+
+- Java (JDK 21)
+- IntelliJ IDEA
+- Java Swing (interfaces gráficas)
+- API de concurrencia de Java (`ExecutorService`, `BlockingQueue`)
 
 ## Estructura del proyecto
 
-El proyecto está organizado en paquetes:
+El código está organizado en paquetes según su responsabilidad:
 
-- `cl.speedfast.modelo` : clases del dominio (Pedido y subclases, Repartidor, ControladorDeEnvios, ZonaDeCarga, interfaces y enum).
+- `cl.speedfast.modelo` : clases del dominio (lógica de negocio).
 - `cl.speedfast.vista` : interfaces gráficas Swing (ventanas).
-- `cl.speedfast.main` : clase Main que inicia la aplicación.
+- `cl.speedfast.main` : clase `Main` que inicia la aplicación.
 
-## Semana 6 - Interfaces gráficas con Swing
+## Modelo de dominio
 
-Interfaz gráfica de escritorio para la gestión de entregas, construida con Java Swing.
+### Jerarquía de pedidos
+- `Pedido` (clase abstracta): define los atributos comunes (id, dirección de entrega, distancia, repartidor y estado) y el método abstracto `calcularTiempoEntrega()`. Implementa las interfaces `Despachable` y `Cancelable`.
+- `PedidoComida`, `PedidoEncomienda`, `PedidoExpress` (subclases): cada una redefine `calcularTiempoEntrega()` con su propia fórmula y `asignarRepartidor()` con su tipo de repartidor (moto, camioneta, bicicleta). Ejemplo de **herencia** y **polimorfismo**.
 
-- `VentanaPrincipal` (JFrame) con botones para registrar pedidos, listar pedidos y asignar repartidor / iniciar entrega.
-- `VentanaRegistroPedido` (JFrame) con formulario (ID, dirección, distancia, tipo mediante JComboBox), validación de datos y confirmación con JOptionPane.
-- `VentanaListaPedidos` (JFrame) con JTable y DefaultTableModel, con opción de refrescar.
-- Navegación entre ventanas y datos compartidos en memoria mediante ControladorDeEnvios.
+### Interfaces
+- `Despachable` : define `despachar()`.
+- `Cancelable` : define `cancelar()`.
+- `Rastreable` : define `verHistorial()`.
 
-## Semanas anteriores
+### Otras clases
+- `EstadoPedido` (enum): PENDIENTE, EN_REPARTO, ENTREGADO.
+- `Repartidor` : implementa `Runnable`; retira y entrega pedidos desde la zona de carga.
+- `ZonaDeCarga` : cola de pedidos compartida (`BlockingQueue`) con acceso sincronizado.
+- `ControladorDeEnvios` : implementa `Rastreable`; almacena el historial de pedidos en memoria.
 
-- Semana 4 - Concurrencia con hilos: simulación de repartidores entregando pedidos de forma concurrente con ExecutorService.
-- Semana 5 - Sincronización de procesos: acceso concurrente a la zona de carga compartida.
+## Evolución por semanas
+
+### Herencia, polimorfismo e interfaces
+Diseño de la jerarquía `Pedido` con sus subclases, aplicando clases abstractas, polimorfismo y las interfaces `Despachable`, `Cancelable` y `Rastreable`.
+
+### Semana 4 - Concurrencia con hilos
+Simulación de repartidores entregando pedidos de forma concurrente. La clase `Repartidor` implementa `Runnable` y la clase `Main` lanza varios repartidores en paralelo mediante un `ExecutorService` con un pool de hilos.
+
+### Semana 5 - Sincronización de procesos
+Manejo del acceso concurrente a la `ZonaDeCarga` compartida. Se usa una `BlockingQueue` y métodos sincronizados para que varios repartidores retiren pedidos sin conflictos, gestionando correctamente los estados de cada pedido (PENDIENTE → EN_REPARTO → ENTREGADO).
+
+### Semana 6 - Interfaces gráficas con Swing
+Interfaz gráfica de escritorio para la gestión de entregas:
+- `VentanaPrincipal` (JFrame): ventana de inicio con botones para registrar pedidos, listar pedidos y asignar repartidor / iniciar entrega. Usa `BorderLayout` y `GridLayout`.
+- `VentanaRegistroPedido` (JFrame): formulario con campos ID, dirección, distancia y tipo de pedido (`JComboBox`). Valida los datos ingresados y confirma el registro con `JOptionPane`.
+- `VentanaListaPedidos` (JFrame): muestra los pedidos en una `JTable` gestionada con `DefaultTableModel`, con opción de refrescar.
+- La navegación entre ventanas y el almacenamiento en memoria se comparten a través de `ControladorDeEnvios`.
 
 ## Ejecución
 
-Ejecutar la clase `Main` (`src/cl/speedfast/main/Main.java`).
+Ejecutar la clase `Main` ubicada en `src/cl/speedfast/main/Main.java`. Al iniciar, se abre la ventana principal de la aplicación (`VentanaPrincipal`).
+
+## Autor
+
+Oscar Fuentes - DuocUC
