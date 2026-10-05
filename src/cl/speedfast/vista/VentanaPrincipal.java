@@ -48,7 +48,7 @@ public class VentanaPrincipal extends JFrame {
 
         // Accion del boton "Listar pedidos": abre la ventana con la tabla
         btnListar.addActionListener(e -> {
-            VentanaListaPedidos ventana = new VentanaListaPedidos(controlador);
+            VentanaListaPedidos ventana = new VentanaListaPedidos();
             ventana.setVisible(true);
         });
 

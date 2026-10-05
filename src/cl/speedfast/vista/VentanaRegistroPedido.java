@@ -1,5 +1,6 @@
 package cl.speedfast.vista;
 
+import cl.speedfast.dao.PedidoDAO;
 import cl.speedfast.modelo.ControladorDeEnvios;
 import cl.speedfast.modelo.Pedido;
 import cl.speedfast.modelo.PedidoComida;
@@ -12,8 +13,8 @@ import java.awt.*;
 public class VentanaRegistroPedido extends JFrame {
 
     private ControladorDeEnvios controlador;
+    private PedidoDAO pedidoDAO;
 
-    // Campos del formulario
     private JTextField txtId;
     private JTextField txtDireccion;
     private JTextField txtDistancia;
@@ -21,13 +22,13 @@ public class VentanaRegistroPedido extends JFrame {
 
     public VentanaRegistroPedido(ControladorDeEnvios controlador) {
         this.controlador = controlador;
+        this.pedidoDAO = new PedidoDAO();
 
         setTitle("Registrar Pedido");
         setSize(400, 300);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // cierra solo esta ventana, no la app
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Panel con los campos, ordenados en una grilla de etiqueta + campo
         JPanel panelForm = new JPanel(new GridLayout(4, 2, 10, 10));
         panelForm.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
@@ -49,13 +50,11 @@ public class VentanaRegistroPedido extends JFrame {
 
         add(panelForm, BorderLayout.CENTER);
 
-        // Boton Guardar abajo
         JButton btnGuardar = new JButton("Guardar");
         JPanel panelBoton = new JPanel();
         panelBoton.add(btnGuardar);
         add(panelBoton, BorderLayout.SOUTH);
 
-        // Accion del boton Guardar: valida, crea el pedido y lo agrega al controlador
         btnGuardar.addActionListener(e -> guardarPedido());
     }
 
@@ -64,7 +63,6 @@ public class VentanaRegistroPedido extends JFrame {
         String direccion = txtDireccion.getText().trim();
         String textoDistancia = txtDistancia.getText().trim();
 
-        // Validacion 1: campos no vacios
         if (textoId.isEmpty() || direccion.isEmpty() || textoDistancia.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Todos los campos son obligatorios.",
@@ -72,7 +70,6 @@ public class VentanaRegistroPedido extends JFrame {
             return;
         }
 
-        // Validacion 2: ID y distancia deben ser numeros
         int id;
         int distancia;
         try {
@@ -85,7 +82,6 @@ public class VentanaRegistroPedido extends JFrame {
             return;
         }
 
-        // Se crea el pedido segun el tipo elegido en el combo
         String tipo = (String) comboTipo.getSelectedItem();
         Pedido pedido;
         if (tipo.equals("Comida")) {
@@ -96,15 +92,16 @@ public class VentanaRegistroPedido extends JFrame {
             pedido = new PedidoExpress(id, direccion, distancia);
         }
 
-        // Se agrega al controlador compartido (lista en memoria)
+        // Guarda en memoria
         controlador.registrarEntrega(pedido);
 
-        // Confirmacion
+        // Guarda en la base de datos
+        pedidoDAO.guardar(pedido);
+
         JOptionPane.showMessageDialog(this,
                 "Pedido #" + id + " (" + tipo + ") registrado correctamente.",
                 "Exito", JOptionPane.INFORMATION_MESSAGE);
 
-        // Limpia el formulario para el siguiente registro
         txtId.setText("");
         txtDireccion.setText("");
         txtDistancia.setText("");

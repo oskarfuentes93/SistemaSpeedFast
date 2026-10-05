@@ -1,12 +1,26 @@
 package cl.speedfast.modelo;
 
 public class Repartidor implements Runnable {
+    private int id;
     private String nombre;
     private ZonaDeCarga zonaDeCarga;
 
     public Repartidor(String nombre, ZonaDeCarga zonaDeCarga) {
         this.nombre = nombre;
         this.zonaDeCarga = zonaDeCarga;
+    }
+
+    public Repartidor(int id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNombre() {
