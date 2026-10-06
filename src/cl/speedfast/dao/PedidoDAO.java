@@ -1,42 +1,34 @@
 package cl.speedfast.dao;
 
-import cl.speedfast.modelo.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// Clase que maneja las operaciones CRUD de pedidos en la base de datos
 public class PedidoDAO {
 
-    public void guardar(Pedido pedido) {
-        String tipo;
-        if (pedido instanceof PedidoComida) {
-            tipo = "COMIDA";
-        } else if (pedido instanceof PedidoEncomienda) {
-            tipo = "ENCOMIENDA";
-        } else {
-            tipo = "EXPRESS";
-        }
-
-        String sql = "INSERT INTO pedido (direccion, tipo, estado) VALUES (?, ?, ?)";
+    // Inserta un nuevo pedido en la tabla pedidos
+    public void create(String direccion, String tipo, String estado) {
+        String sql = "INSERT INTO pedidos (direccion, tipo, estado) VALUES (?, ?, ?)";
 
         try (Connection conn = ConexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, pedido.getDireccionEntrega());
+            ps.setString(1, direccion);
             ps.setString(2, tipo);
-            ps.setString(3, pedido.getEstado().name());
+            ps.setString(3, estado);
             ps.executeUpdate();
-
-            System.out.println("Pedido guardado en la base de datos.");
+            System.out.println("Pedido registrado correctamente.");
 
         } catch (SQLException e) {
-            System.out.println("Error al guardar pedido: " + e.getMessage());
+            System.out.println("Error al registrar pedido: " + e.getMessage());
         }
     }
 
-    public List<Object[]> listarTodos() {
+    // Consulta todos los pedidos de la tabla
+    public List<Object[]> readAll() {
         List<Object[]> lista = new ArrayList<>();
-        String sql = "SELECT id, direccion, tipo, estado FROM pedido";
+        String sql = "SELECT id, direccion, tipo, estado FROM pedidos";
 
         try (Connection conn = ConexionDB.conectar();
              Statement stmt = conn.createStatement();
@@ -45,17 +37,52 @@ public class PedidoDAO {
             while (rs.next()) {
                 Object[] fila = {
                         rs.getInt("id"),
-                        rs.getString("tipo"),
                         rs.getString("direccion"),
+                        rs.getString("tipo"),
                         rs.getString("estado")
                 };
                 lista.add(fila);
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al listar pedidos: " + e.getMessage());
+            System.out.println("Error al consultar pedidos: " + e.getMessage());
         }
 
         return lista;
+    }
+
+    // Actualiza un pedido existente por su ID
+    public void update(int id, String direccion, String tipo, String estado) {
+        String sql = "UPDATE pedidos SET direccion = ?, tipo = ?, estado = ? WHERE id = ?";
+
+        try (Connection conn = ConexionDB.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, direccion);
+            ps.setString(2, tipo);
+            ps.setString(3, estado);
+            ps.setInt(4, id);
+            ps.executeUpdate();
+            System.out.println("Pedido actualizado correctamente.");
+
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar pedido: " + e.getMessage());
+        }
+    }
+
+    // Elimina un pedido por su ID
+    public void delete(int id) {
+        String sql = "DELETE FROM pedidos WHERE id = ?";
+
+        try (Connection conn = ConexionDB.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            System.out.println("Pedido eliminado correctamente.");
+
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar pedido: " + e.getMessage());
+        }
     }
 }
