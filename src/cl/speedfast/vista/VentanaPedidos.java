@@ -90,10 +90,14 @@ public class VentanaPedidos extends JFrame {
             }
             String tipo = (String) comboTipo.getSelectedItem();
             String estado = (String) comboEstado.getSelectedItem();
-            dao.create(direccion, tipo, estado);
-            JOptionPane.showMessageDialog(this, "Pedido registrado correctamente.");
-            limpiarFormulario();
-            cargarTabla();
+            if (dao.create(direccion, tipo, estado)) {
+                JOptionPane.showMessageDialog(this, "Pedido registrado correctamente.");
+                limpiarFormulario();
+                cargarTabla();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar el pedido.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // Accion: Editar pedido seleccionado
@@ -113,10 +117,14 @@ public class VentanaPedidos extends JFrame {
             int id = (int) modeloTabla.getValueAt(fila, 0);
             String tipo = (String) comboTipo.getSelectedItem();
             String estado = (String) comboEstado.getSelectedItem();
-            dao.update(id, direccion, tipo, estado);
-            JOptionPane.showMessageDialog(this, "Pedido actualizado correctamente.");
-            limpiarFormulario();
-            cargarTabla();
+            if (dao.update(id, direccion, tipo, estado)) {
+                JOptionPane.showMessageDialog(this, "Pedido actualizado correctamente.");
+                limpiarFormulario();
+                cargarTabla();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al actualizar el pedido.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // Accion: Eliminar pedido seleccionado
@@ -131,10 +139,14 @@ public class VentanaPedidos extends JFrame {
             int confirmacion = JOptionPane.showConfirmDialog(this,
                     "¿Estás seguro de eliminar este pedido?", "Confirmar", JOptionPane.YES_NO_OPTION);
             if (confirmacion == JOptionPane.YES_OPTION) {
-                dao.delete(id);
-                JOptionPane.showMessageDialog(this, "Pedido eliminado correctamente.");
-                limpiarFormulario();
-                cargarTabla();
+                if (dao.delete(id)) {
+                    JOptionPane.showMessageDialog(this, "Pedido eliminado correctamente.");
+                    limpiarFormulario();
+                    cargarTabla();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al eliminar el pedido. Puede tener entregas asociadas.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 

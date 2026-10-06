@@ -71,13 +71,10 @@ public class VentanaEntregas extends JFrame {
             int fila = tabla.getSelectedRow();
             if (fila >= 0) {
                 String idPedido = modeloTabla.getValueAt(fila, 1).toString();
-                String direccion = modeloTabla.getValueAt(fila, 2).toString();
                 String idRepartidor = modeloTabla.getValueAt(fila, 3).toString();
-                String nombreRep = modeloTabla.getValueAt(fila, 4).toString();
                 txtFecha.setText(modeloTabla.getValueAt(fila, 5).toString());
                 txtHora.setText(modeloTabla.getValueAt(fila, 6).toString());
 
-                // Seleccionar el item correcto en los combos
                 for (int i = 0; i < comboPedido.getItemCount(); i++) {
                     if (comboPedido.getItemAt(i).startsWith(idPedido + " - ")) {
                         comboPedido.setSelectedIndex(i);
@@ -115,10 +112,14 @@ public class VentanaEntregas extends JFrame {
             int idRepartidor = extraerId(comboRepartidor);
             String fecha = txtFecha.getText().trim();
             String hora = txtHora.getText().trim();
-            entregaDAO.create(idPedido, idRepartidor, fecha, hora);
-            JOptionPane.showMessageDialog(this, "Entrega registrada correctamente.");
-            limpiarFormulario();
-            cargarTabla();
+            if (entregaDAO.create(idPedido, idRepartidor, fecha, hora)) {
+                JOptionPane.showMessageDialog(this, "Entrega registrada correctamente.");
+                limpiarFormulario();
+                cargarTabla();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar la entrega. Verifique fecha y hora.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // Accion: Editar entrega seleccionada
@@ -135,10 +136,14 @@ public class VentanaEntregas extends JFrame {
             int idRepartidor = extraerId(comboRepartidor);
             String fecha = txtFecha.getText().trim();
             String hora = txtHora.getText().trim();
-            entregaDAO.update(id, idPedido, idRepartidor, fecha, hora);
-            JOptionPane.showMessageDialog(this, "Entrega actualizada correctamente.");
-            limpiarFormulario();
-            cargarTabla();
+            if (entregaDAO.update(id, idPedido, idRepartidor, fecha, hora)) {
+                JOptionPane.showMessageDialog(this, "Entrega actualizada correctamente.");
+                limpiarFormulario();
+                cargarTabla();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al actualizar la entrega. Verifique fecha y hora.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // Accion: Eliminar entrega seleccionada
@@ -153,10 +158,14 @@ public class VentanaEntregas extends JFrame {
             int confirmacion = JOptionPane.showConfirmDialog(this,
                     "¿Estás seguro de eliminar esta entrega?", "Confirmar", JOptionPane.YES_NO_OPTION);
             if (confirmacion == JOptionPane.YES_OPTION) {
-                entregaDAO.delete(id);
-                JOptionPane.showMessageDialog(this, "Entrega eliminada correctamente.");
-                limpiarFormulario();
-                cargarTabla();
+                if (entregaDAO.delete(id)) {
+                    JOptionPane.showMessageDialog(this, "Entrega eliminada correctamente.");
+                    limpiarFormulario();
+                    cargarTabla();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al eliminar la entrega.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 

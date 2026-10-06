@@ -8,7 +8,7 @@ import java.util.List;
 public class PedidoDAO {
 
     // Inserta un nuevo pedido en la tabla pedidos
-    public void create(String direccion, String tipo, String estado) {
+    public boolean create(String direccion, String tipo, String estado) {
         String sql = "INSERT INTO pedidos (direccion, tipo, estado) VALUES (?, ?, ?)";
 
         try (Connection conn = ConexionDB.conectar();
@@ -17,11 +17,12 @@ public class PedidoDAO {
             ps.setString(1, direccion);
             ps.setString(2, tipo);
             ps.setString(3, estado);
-            ps.executeUpdate();
-            System.out.println("Pedido registrado correctamente.");
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
             System.out.println("Error al registrar pedido: " + e.getMessage());
+            return false;
         }
     }
 
@@ -52,7 +53,7 @@ public class PedidoDAO {
     }
 
     // Actualiza un pedido existente por su ID
-    public void update(int id, String direccion, String tipo, String estado) {
+    public boolean update(int id, String direccion, String tipo, String estado) {
         String sql = "UPDATE pedidos SET direccion = ?, tipo = ?, estado = ? WHERE id = ?";
 
         try (Connection conn = ConexionDB.conectar();
@@ -62,27 +63,29 @@ public class PedidoDAO {
             ps.setString(2, tipo);
             ps.setString(3, estado);
             ps.setInt(4, id);
-            ps.executeUpdate();
-            System.out.println("Pedido actualizado correctamente.");
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
             System.out.println("Error al actualizar pedido: " + e.getMessage());
+            return false;
         }
     }
 
     // Elimina un pedido por su ID
-    public void delete(int id) {
+    public boolean delete(int id) {
         String sql = "DELETE FROM pedidos WHERE id = ?";
 
         try (Connection conn = ConexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            ps.executeUpdate();
-            System.out.println("Pedido eliminado correctamente.");
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
             System.out.println("Error al eliminar pedido: " + e.getMessage());
+            return false;
         }
     }
 }

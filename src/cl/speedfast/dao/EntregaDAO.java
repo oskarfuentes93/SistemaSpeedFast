@@ -8,7 +8,7 @@ import java.util.List;
 public class EntregaDAO {
 
     // Inserta una nueva entrega asociando un pedido con un repartidor
-    public void create(int idPedido, int idRepartidor, String fecha, String hora) {
+    public boolean create(int idPedido, int idRepartidor, String fecha, String hora) {
         String sql = "INSERT INTO entregas (id_pedido, id_repartidor, fecha, hora) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = ConexionDB.conectar();
@@ -18,11 +18,15 @@ public class EntregaDAO {
             ps.setInt(2, idRepartidor);
             ps.setDate(3, Date.valueOf(fecha));
             ps.setTime(4, Time.valueOf(hora + ":00"));
-            ps.executeUpdate();
-            System.out.println("Entrega registrada correctamente.");
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
-            System.out.println("Error al registrar entrega: " + e.getMessage());
+            System.out.println("Error SQL al registrar entrega: " + e.getMessage());
+            return false;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error en formato de fecha/hora: " + e.getMessage());
+            return false;
         }
     }
 
@@ -59,7 +63,7 @@ public class EntregaDAO {
     }
 
     // Actualiza una entrega existente por su ID
-    public void update(int id, int idPedido, int idRepartidor, String fecha, String hora) {
+    public boolean update(int id, int idPedido, int idRepartidor, String fecha, String hora) {
         String sql = "UPDATE entregas SET id_pedido = ?, id_repartidor = ?, fecha = ?, hora = ? WHERE id = ?";
 
         try (Connection conn = ConexionDB.conectar();
@@ -70,27 +74,32 @@ public class EntregaDAO {
             ps.setDate(3, Date.valueOf(fecha));
             ps.setTime(4, Time.valueOf(hora + ":00"));
             ps.setInt(5, id);
-            ps.executeUpdate();
-            System.out.println("Entrega actualizada correctamente.");
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
-            System.out.println("Error al actualizar entrega: " + e.getMessage());
+            System.out.println("Error SQL al actualizar entrega: " + e.getMessage());
+            return false;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error en formato de fecha/hora: " + e.getMessage());
+            return false;
         }
     }
 
     // Elimina una entrega por su ID
-    public void delete(int id) {
+    public boolean delete(int id) {
         String sql = "DELETE FROM entregas WHERE id = ?";
 
         try (Connection conn = ConexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            ps.executeUpdate();
-            System.out.println("Entrega eliminada correctamente.");
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
             System.out.println("Error al eliminar entrega: " + e.getMessage());
+            return false;
         }
     }
 }

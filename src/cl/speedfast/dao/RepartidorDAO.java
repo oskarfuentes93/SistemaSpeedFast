@@ -8,18 +8,19 @@ import java.util.List;
 public class RepartidorDAO {
 
     // Inserta un nuevo repartidor en la tabla repartidores
-    public void create(String nombre) {
+    public boolean create(String nombre) {
         String sql = "INSERT INTO repartidores (nombre) VALUES (?)";
 
         try (Connection conn = ConexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, nombre);
-            ps.executeUpdate();
-            System.out.println("Repartidor registrado correctamente.");
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
             System.out.println("Error al registrar repartidor: " + e.getMessage());
+            return false;
         }
     }
 
@@ -48,7 +49,7 @@ public class RepartidorDAO {
     }
 
     // Actualiza un repartidor existente por su ID
-    public void update(int id, String nombre) {
+    public boolean update(int id, String nombre) {
         String sql = "UPDATE repartidores SET nombre = ? WHERE id = ?";
 
         try (Connection conn = ConexionDB.conectar();
@@ -56,27 +57,29 @@ public class RepartidorDAO {
 
             ps.setString(1, nombre);
             ps.setInt(2, id);
-            ps.executeUpdate();
-            System.out.println("Repartidor actualizado correctamente.");
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
             System.out.println("Error al actualizar repartidor: " + e.getMessage());
+            return false;
         }
     }
 
     // Elimina un repartidor por su ID
-    public void delete(int id) {
+    public boolean delete(int id) {
         String sql = "DELETE FROM repartidores WHERE id = ?";
 
         try (Connection conn = ConexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            ps.executeUpdate();
-            System.out.println("Repartidor eliminado correctamente.");
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
             System.out.println("Error al eliminar repartidor: " + e.getMessage());
+            return false;
         }
     }
 }

@@ -76,10 +76,14 @@ public class VentanaRepartidores extends JFrame {
                         "Error de validación", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            dao.create(nombre);
-            JOptionPane.showMessageDialog(this, "Repartidor registrado correctamente.");
-            limpiarFormulario();
-            cargarTabla();
+            if (dao.create(nombre)) {
+                JOptionPane.showMessageDialog(this, "Repartidor registrado correctamente.");
+                limpiarFormulario();
+                cargarTabla();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar el repartidor.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // Accion: Editar repartidor seleccionado
@@ -97,10 +101,14 @@ public class VentanaRepartidores extends JFrame {
                 return;
             }
             int id = (int) modeloTabla.getValueAt(fila, 0);
-            dao.update(id, nombre);
-            JOptionPane.showMessageDialog(this, "Repartidor actualizado correctamente.");
-            limpiarFormulario();
-            cargarTabla();
+            if (dao.update(id, nombre)) {
+                JOptionPane.showMessageDialog(this, "Repartidor actualizado correctamente.");
+                limpiarFormulario();
+                cargarTabla();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al actualizar el repartidor.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // Accion: Eliminar repartidor seleccionado
@@ -115,10 +123,14 @@ public class VentanaRepartidores extends JFrame {
             int confirmacion = JOptionPane.showConfirmDialog(this,
                     "¿Estás seguro de eliminar este repartidor?", "Confirmar", JOptionPane.YES_NO_OPTION);
             if (confirmacion == JOptionPane.YES_OPTION) {
-                dao.delete(id);
-                JOptionPane.showMessageDialog(this, "Repartidor eliminado correctamente.");
-                limpiarFormulario();
-                cargarTabla();
+                if (dao.delete(id)) {
+                    JOptionPane.showMessageDialog(this, "Repartidor eliminado correctamente.");
+                    limpiarFormulario();
+                    cargarTabla();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al eliminar el repartidor. Puede tener entregas asociadas.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
